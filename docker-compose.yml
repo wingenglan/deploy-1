@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      PORT: 8081
+      DATABASE_PATH: /data/flowboard.db
+    volumes:
+      - taskboard_data:/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  taskboard_data:
