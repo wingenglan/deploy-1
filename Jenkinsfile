@@ -21,6 +21,7 @@ pipeline {
 
   environment {
     DEPLOY_PATH = '/opt/flowboard'
+    DEPLOY_HOST = '8.138.151.118'
   }
 
   stages {
