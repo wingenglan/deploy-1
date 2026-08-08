@@ -60,8 +60,21 @@ pipeline {
     stage('Deploy') {
       when { expression { params.DEPLOY } }
       steps {
-        // 第 6 步再开启：用 deploy-ssh-key 凭据 SSH 到服务器执行部署
-        echo 'DEPLOY 参数未勾选，跳过部署。'
+        withCredentials([sshUserPrivateKey(
+          credentialsId: 'deploy-ssh-key',
+          keyFileVariable: 'SSH_KEY',
+          usernameVariable: 'SSH_USER'
+        )]) {
+          sh '''
+            # 在服务器上拉取所选分支的最新代码，再按所选项目执行部署脚本
+            ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no \
+              ${SSH_USER}@${DEPLOY_HOST} \
+              "cd ${DEPLOY_PATH} && \
+               git fetch origin ${BRANCH} && \
+               git reset --hard origin/${BRANCH} && \
+               sh scripts/deploy.sh ${PROJECT}"
+          '''
+        }
       }
     }
   }
