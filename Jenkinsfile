@@ -45,7 +45,8 @@ pipeline {
       agent {
         docker {
           image 'golang:1.22'
-          args '-e GOPROXY=https://goproxy.cn,direct'
+          // HOME 指向可写的 /tmp，否则编译缓存默认写到 root 目录而权限不足
+          args '-e GOPROXY=https://goproxy.cn,direct -e HOME=/tmp'
         }
       }
       when { expression { params.PROJECT in ['all', 'backend'] } }
@@ -61,7 +62,8 @@ pipeline {
       agent {
         docker {
           image 'node:20'
-          args '-e npm_config_registry=https://registry.npmmirror.com'
+          // HOME 指向 /tmp：npm 缓存（默认 ~/.npm）在容器里才可写
+          args '-e npm_config_registry=https://registry.npmmirror.com -e HOME=/tmp'
         }
       }
       when { expression { params.PROJECT in ['all', 'frontend'] } }
