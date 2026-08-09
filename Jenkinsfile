@@ -42,7 +42,12 @@ pipeline {
     stage('Verify backend') {
       // 用官方 golang 镜像作为"临时环境容器"跑后端测试，跑完自动销毁
       // GOPROXY 走国内加速，避免依赖下载卡住
-      agent { docker { image 'golang:1.22' args '-e GOPROXY=https://goproxy.cn,direct' } }
+      agent {
+        docker {
+          image 'golang:1.22'
+          args '-e GOPROXY=https://goproxy.cn,direct'
+        }
+      }
       when { expression { params.PROJECT in ['all', 'backend'] } }
       steps {
         dir('backend') {
@@ -53,7 +58,12 @@ pipeline {
 
     stage('Build frontend') {
       // 用官方 node 镜像构建前端；npm 走国内镜像
-      agent { docker { image 'node:20' args '-e npm_config_registry=https://registry.npmmirror.com' } }
+      agent {
+        docker {
+          image 'node:20'
+          args '-e npm_config_registry=https://registry.npmmirror.com'
+        }
+      }
       when { expression { params.PROJECT in ['all', 'frontend'] } }
       steps {
         dir('frontend') {
