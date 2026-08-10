@@ -27,13 +27,12 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        // 拉取指定分支的代码；github-token 是上一步在凭据里创建的 ID
+        // 公开仓库通过 HTTPS 匿名拉取指定分支，无需配置 GitHub 凭据
         checkout([
           $class: 'GitSCM',
           branches: [[name: "${params.BRANCH}"]],
           userRemoteConfigs: [[
-            url: 'https://github.com/wingenglan/deploy-1.git',
-            credentialsId: 'github-token'
+            url: 'https://github.com/wingenglan/deploy-1.git'
           ]]
         ])
       }
